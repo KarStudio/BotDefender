@@ -1,0 +1,4 @@
+name: BotDefender
+version: '${project.version}'
+main: com.ghostchu.botdefender.BotDefender
+description: BotDefender by Ghost_chu
