@@ -1,0 +1,129 @@
+# 速率限制
+speed-limit:
+  # 检查时间，默认 3 分钟
+  time: 3m
+  # TCP 握手 (-1)为禁用
+  # 注意，每一个 Ping 请求对应一次握手，加入游戏同理
+  handshake:
+    # 普通模式下，每 time 时间段内，最多可以握手多少次
+    NORMAL: 40
+    # Under Attack 模式下，每 time 时间段内，最多可以握手多少次
+    ATTACK: 20
+  # Motd Ping (-1)为禁用
+  # 比 handshake 要稍微低一点
+  ping:
+    # 普通模式下，每 time 时间段内，最多可以请求 MOTD 多少次
+    NORMAL: 30
+    # Under Attack 模式下，每 time 时间段内，最多可以请求 MOTD 多少次
+    ATTACK: 15
+  # Favicon 限流 (-1)为禁用
+  favicon-override:
+    # 普通模式下默认不限流
+    NORMAL: -1
+    # Under Attack 模式下，每 time 时间段内仅发送8次 Favicon
+    # 超出后 Favicon 减少带宽影响
+    ATTACK: 8
+
+# 在玩家发起连接服务器请求后，执行置信度检查
+# 每位玩家的可疑分数默认为 0
+# 越趋于负无穷，则该玩家可疑度越低
+# 越趋于正无穷，则该玩家可疑度越高
+suspicion:
+  # 白名单地址
+  exclude:
+    - 127.0.0.1
+    - 10.0.0.1
+  # 基于国家/地区的评分
+  country_filter:
+    # 是否启用
+    enable: true
+    # 不在列表里的国家/地区评分
+    not_in_list:
+      NORMAL: +30
+      ATTACK: +1000
+    # 国家/地区列表
+    country:
+      # 国家/地区代号: 分数
+      CN:
+        NORMAL: -30
+        ATTACK: -10
+  # 基于城市的评分
+  city_filter:
+    # 是否启用
+    enable: false
+    # 不在列表里的国家/地区评分
+    not_in_list:
+      NORMAL: +0
+      ATTACK: +0
+    # 城市列表
+    cities:
+      # 城市名称: 分数
+      HUNAN:
+        NOTMAL: +0
+        ATTACK: +0
+  # 基于 ASN 的评分
+  asn_filter:
+    # 是否启用
+    enable: false
+    # 不在列表里的ASN评分
+    not_in_list:
+      NORMAL: +0
+      ATTACK: +0
+    # ASN列表
+    asn:
+      # ASN 名称: 分数
+      12375:
+        NORMAL: +0
+        ATTACK: +0
+  # 代理过滤器
+  # BotDefender 会定期更新自己的代理数据库
+  # 如果检测到玩家正在使用已知的代理服务器
+  # 则额外赋分
+  proxy_filter:
+    # 是否启用
+    enable: true
+    score:
+      NORMAL: +15000
+      ATTACK: +15000
+    whitelist:
+      - 172.0.0.0
+  # 如果玩家连接前 Ping 过服务器，则额外赋分（数据由 speed-limiter 提供，若禁用，则该值无效）
+  ping:
+    NORMAL: -10
+    ATTACK: +0
+  # 如果玩家之前链接过服务器，则额外赋分（数据由 speed-limiter 提供，若禁用，则该值无效）
+  newbie:
+    NORMAL: -30
+    ATTACK: -40
+
+# 决策器
+processor:
+  # 常规模式下
+  NORMAL:
+    # 当可疑分数超过该值时，执行操作
+    min_suspicion_score: 50
+    # 执行操作，可以为 disconnect, block
+    action: disconnect
+    # 提醒消息
+    message: "安全检查未通过\n请检查您的设备网络环境，如果开启了加速器或者VPN，请将其禁用\n"
+    # 屏蔽时长（仅 block 操作可用）
+    duration: 30m
+  ATTACK:
+    # 当可疑分数超过该值时，执行操作
+    min_suspicion_score: 30
+    # 执行操作，可以为 disconnect, block
+    action: block
+    # 提醒消息
+    message: "安全检查未通过\n海外 IP 地址在服务器处于攻击状态下时无法连接到服务器\n请检查您的设备网络环境，如果开启了加速器或者VPN，请将其禁用\n"
+    # 屏蔽时长（仅 block 操作可用）
+    duration: 30m
+# 服务告警
+alert:
+  webhook: "https://webhook.com"
+  type:
+    new_block: false
+    entering_attack_mode: true
+    quitting_attack_mode: true
+# RPC消息处理服务器，用于处理IP封禁等
+rpc:
+  url: "localhost:1234"
