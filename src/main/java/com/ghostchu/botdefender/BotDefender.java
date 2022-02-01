@@ -77,6 +77,11 @@ public final class BotDefender extends Plugin {
         ConfigurationProvider.getProvider(YamlConfiguration.class).save(this.config, new File(getDataFolder(), "config.yml"));
     }
 
+    public void setCurrentMode(@NotNull StatusMode mode){
+        this.currentMode = mode;
+        getLogger().info("BotDefender is now in " + mode.name() + " mode.");
+    }
+
     public void saveDefaultConfig() {
         if (!getDataFolder().exists())
             getDataFolder().mkdir();

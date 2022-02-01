@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.time.Duration;
+import java.util.Date;
 
 public class BlockControllerRPC implements Reloadable, BlockController {
     private final BotDefender plugin;
@@ -52,10 +53,12 @@ public class BlockControllerRPC implements Reloadable, BlockController {
      */
     @Override
     public void block(@NotNull InetAddress address, @NotNull Duration duration) {
+        long endTime = System.currentTimeMillis()+duration.toMillis();
+        plugin.getLogger().info("[RPC] Block IPAddress: "+address.getHostAddress()+", Until: "+ new Date(endTime));
         BlockControllerProto.Address rpcAddress = BlockControllerProto.Address.newBuilder().setAddress(address.getHostAddress()).build();
         BlockControllerProto.BlockRequest rpcBlockRequest = BlockControllerProto.BlockRequest.newBuilder()
                 .setAddress(rpcAddress)
-                .setEndTime(System.currentTimeMillis()+duration.toMillis())
+                .setEndTime(endTime)
                 .build();
         //noinspection ResultOfMethodCallIgnored
         blockingStub.blockAddress(rpcBlockRequest);
@@ -68,6 +71,7 @@ public class BlockControllerRPC implements Reloadable, BlockController {
      */
     @Override
     public void unblock(@NotNull InetAddress address) {
+        plugin.getLogger().info("[RPC] Unblock IPAddress: "+address.getHostAddress());
         BlockControllerProto.Address rpcAddress = BlockControllerProto.Address.newBuilder().setAddress(address.getHostAddress()).build();
         //noinspection ResultOfMethodCallIgnored
         blockingStub.unblockAddress(rpcAddress);
