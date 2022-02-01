@@ -3,6 +3,8 @@ package com.ghostchu.botdefender;
 import com.ghostchu.botdefender.blocker.BlockController;
 import com.ghostchu.botdefender.geoip.GeoReader;
 import com.ghostchu.botdefender.speedlimit.SpeedLimiter;
+import com.ghostchu.botdefender.suspicion.BasicSuspicionProvider;
+import com.ghostchu.botdefender.suspicion.Suspicion;
 import com.ghostchu.simplereloadlib.ReloadManager;
 import jdk.internal.org.jline.utils.Status;
 import lombok.Getter;
@@ -21,7 +23,7 @@ import java.util.logging.Level;
 
 public final class BotDefender extends Plugin {
     @Getter
-    private final GeoReader geoReader = new GeoReader(this);
+    private  GeoReader geoReader;
     private Configuration config;
     @Getter
     private final ReloadManager reloadManager = new ReloadManager();
@@ -31,6 +33,8 @@ public final class BotDefender extends Plugin {
     private StatusMode currentMode = StatusMode.NORMAL;
     @Getter
     private SpeedLimiter speedLimiter;
+    @Getter
+    private Suspicion suspicion;
 
 
 
@@ -40,6 +44,7 @@ public final class BotDefender extends Plugin {
         getDataFolder().mkdirs();
         saveDefaultConfig();
         loadConfig();
+        this.geoReader = new GeoReader(this);
         try {
             geoReader.setupAndUpdateDatabase(getConfig().getString("maxmind.key"), getDataFolder());
         } catch (IOException e) {
@@ -47,7 +52,7 @@ public final class BotDefender extends Plugin {
             return;
         }
         this.speedLimiter = new SpeedLimiter(this);
-
+        this.suspicion = new BasicSuspicionProvider(this);
         getLogger().info("BotDefender by KarNetwork has been initialized.");
     }
 

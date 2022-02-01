@@ -44,6 +44,9 @@ public class GeoReader {
         if (!dataFolder.exists())
             //noinspection ResultOfMethodCallIgnored
             dataFolder.mkdirs();
+
+        // @TODO 缓存检查
+
         // Atom update - Only replace database file while new database download successfully.
 
         try {

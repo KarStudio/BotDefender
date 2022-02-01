@@ -91,7 +91,7 @@ processor:
     # 当可疑分数超过该值时，执行操作
     min_suspicion_score: 50
     # 执行操作，可以为 disconnect, block
-    action: disconnect
+    action: DISCONNECT
     # 提醒消息
     message: "安全检查未通过\n请检查您的设备网络环境，如果开启了加速器或者VPN，请将其禁用\n"
     # 屏蔽时长（仅 block 操作可用）
@@ -100,7 +100,7 @@ processor:
     # 当可疑分数超过该值时，执行操作
     min_suspicion_score: 30
     # 执行操作，可以为 disconnect, block
-    action: block
+    action: BLOCK
     # 提醒消息
     message: "安全检查未通过\n海外 IP 地址在服务器处于攻击状态下时无法连接到服务器\n请检查您的设备网络环境，如果开启了加速器或者VPN，请将其禁用\n"
     # 屏蔽时长（仅 block 操作可用）
