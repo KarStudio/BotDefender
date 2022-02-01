@@ -114,7 +114,8 @@ alert:
     quitting_attack_mode: true
 # RPC消息处理服务器，用于处理IP封禁等
 rpc:
-  url: "localhost:1234"
+  user: proxy
+  target: "localhost:1234"
 # MaxMind 的 GeoIP 库（当前在用 GeoLite）
 maxmind:
   key: "1234567"
