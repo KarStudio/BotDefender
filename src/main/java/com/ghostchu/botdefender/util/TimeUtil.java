@@ -2,8 +2,6 @@ package com.ghostchu.botdefender.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
-
 public class TimeUtil {
 
     public static long convert(@NotNull String time){
@@ -24,7 +22,7 @@ public class TimeUtil {
         }
 
         int timeValue = Integer.parseInt(time.substring(0, time.length() - timeUnit[timeUnitIndex].length()));
-        return (long) timeValue * timeUnitValue[timeUnitIndex];
+        return (long) timeValue * timeUnitValue[timeUnitIndex] * 1000;
     }
     @NotNull
     public static String convert(long time){
