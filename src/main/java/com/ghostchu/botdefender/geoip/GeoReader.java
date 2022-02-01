@@ -32,7 +32,7 @@ import java.util.zip.GZIPInputStream;
 
 public class GeoReader implements Listener, Reloadable {
     private final BotDefender plugin;
-    private DatabaseReader cityReader;
+    private DatabaseReader countryReader;
     private DatabaseReader asnReader;
     private Timer timer = new Timer("GeoReader-DatabaseUpdate", true);
 
@@ -84,10 +84,10 @@ public class GeoReader implements Listener, Reloadable {
         } catch (IOException e) {
             plugin.getLogger().log(Level.WARNING, "Failed to download GeoIP-ASN database.", e);
         }
-        File cityFile = new File(dataFolder, "GeoIP2-City.mmdb");
+        File countryFile = new File(dataFolder, "GeoIP2-Country.mmdb");
         File asnFile = new File(dataFolder, "GeoIP2-ASN.mmdb");
-        if (cityFile.exists()) {
-            this.cityReader = new DatabaseReader.Builder(cityFile)
+        if (countryFile.exists()) {
+            this.countryReader = new DatabaseReader.Builder(countryFile)
                     .withCache(new CHMCache())
                     .build();
         }
@@ -97,7 +97,7 @@ public class GeoReader implements Listener, Reloadable {
                     .build();
         }
 
-        if (this.cityReader == null || this.asnReader == null) {
+        if (this.countryReader == null || this.asnReader == null) {
             throw new IOException("Failed to load GeoIP database.");
         }
     }
@@ -214,9 +214,9 @@ public class GeoReader implements Listener, Reloadable {
      */
     @Nullable
     public String query(@NotNull InetAddress address) {
-        if (cityReader == null) return null;
+        if (countryReader == null) return null;
         try {
-            CountryResponse response = cityReader.country(address);
+            CountryResponse response = countryReader.country(address);
             if (response.getRepresentedCountry() != null) {
                 return response.getRepresentedCountry().getIsoCode();
             }
