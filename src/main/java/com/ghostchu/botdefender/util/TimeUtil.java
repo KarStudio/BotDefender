@@ -31,7 +31,7 @@ public class TimeUtil {
         // time format: [0-9]+[smhdw]
         // time unit: s, m, h, d, w, y
         // time unit: second, minute, hour, day, week, year
-
+        time /= 1000;
         String[] timeUnit = {"s", "m", "h", "d", "w", "y"};
         int[] timeUnitValue = {1, 60, 3600, 86400, 604800, 31536000};
 
