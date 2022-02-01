@@ -42,7 +42,6 @@ public class SpeedLimiter implements Listener, Reloadable {
     }
 
     public void init() {
-        InetAddress address;
         Configuration speedLimitConfig = plugin.getConfig().getSection("speed-limit");
         long time = TimeUtil.convert(speedLimitConfig.getString("speed-limit.time", "1m"));
         this.blockDuration = TimeUtil.convert(speedLimitConfig.getString("block-duration", "10m"));
