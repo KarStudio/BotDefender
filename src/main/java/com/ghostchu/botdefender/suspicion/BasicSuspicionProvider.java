@@ -3,6 +3,7 @@ package com.ghostchu.botdefender.suspicion;
 import com.ghostchu.botdefender.BotDefender;
 import com.ghostchu.botdefender.StatusMode;
 import com.ghostchu.botdefender.geoip.GeoReader;
+import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
 import net.md_5.bungee.config.Configuration;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,14 @@ public class BasicSuspicionProvider implements Suspicion, Reloadable {
 
     public BasicSuspicionProvider(@NotNull BotDefender plugin) {
         this.plugin = plugin;
+        init();
         plugin.getReloadManager().register(this);
+    }
+
+    @Override
+    public ReloadResult reloadModule() throws Exception {
+        init();
+        return Reloadable.super.reloadModule();
     }
 
     public void init() {

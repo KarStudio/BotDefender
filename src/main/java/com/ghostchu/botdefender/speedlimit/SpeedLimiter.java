@@ -4,7 +4,6 @@ import com.ghostchu.botdefender.BotDefender;
 import com.ghostchu.botdefender.StatusMode;
 import com.ghostchu.botdefender.util.TimeUtil;
 import com.ghostchu.simplereloadlib.ReloadResult;
-import com.ghostchu.simplereloadlib.ReloadStatus;
 import com.ghostchu.simplereloadlib.Reloadable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -135,8 +134,8 @@ public class SpeedLimiter implements Listener, Reloadable {
 
 
     @Override
-    public ReloadResult reloadModule() {
+    public ReloadResult reloadModule() throws Exception {
         init();
-        return ReloadResult.builder().status(ReloadStatus.SUCCESS).build();
+        return Reloadable.super.reloadModule();
     }
 }

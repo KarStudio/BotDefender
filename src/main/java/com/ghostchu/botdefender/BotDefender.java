@@ -6,7 +6,6 @@ import com.ghostchu.botdefender.speedlimit.SpeedLimiter;
 import com.ghostchu.botdefender.suspicion.BasicSuspicionProvider;
 import com.ghostchu.botdefender.suspicion.Suspicion;
 import com.ghostchu.simplereloadlib.ReloadManager;
-import jdk.internal.org.jline.utils.Status;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.plugin.Plugin;
