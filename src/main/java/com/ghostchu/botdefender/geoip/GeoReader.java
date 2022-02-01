@@ -1,6 +1,10 @@
 package com.ghostchu.botdefender.geoip;
 
 import com.ghostchu.botdefender.BotDefender;
+import com.ghostchu.botdefender.util.TimeUtil;
+import com.ghostchu.simplereloadlib.ReloadResult;
+import com.ghostchu.simplereloadlib.ReloadStatus;
+import com.ghostchu.simplereloadlib.Reloadable;
 import com.ice.tar.TarEntry;
 import com.ice.tar.TarInputStream;
 import com.maxmind.db.CHMCache;
@@ -10,6 +14,7 @@ import com.maxmind.geoip2.model.AsnResponse;
 import com.maxmind.geoip2.model.CountryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.md_5.bungee.api.plugin.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,18 +25,38 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
-public class GeoReader {
+public class GeoReader implements Listener, Reloadable {
     private final BotDefender plugin;
     private DatabaseReader cityReader;
     private DatabaseReader asnReader;
+    private Timer timer = new Timer("GeoReader-DatabaseUpdate", true);
 
     public GeoReader(@NotNull BotDefender defender) {
         this.plugin = defender;
+        String key = defender.getConfig().getString("maxmind.key");
+        long updateTime = TimeUtil.convert(plugin.getConfig().getString("maxmind.update", "1d"));
+        this.timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    setupAndUpdateDatabase(key, plugin.getDataFolder());
+                } catch (IOException e) {
+                    plugin.getLogger().log(Level.WARNING, "Auto GeoIP database update failed!", e);
+                }
+            }
+        }, updateTime, updateTime);
+        plugin.getReloadManager().register(this);
     }
 
+    @Override
+    public ReloadResult reloadModule() {
+        return ReloadResult.builder().status(ReloadStatus.REQUIRE_RESTART).reason("偷懒没写重载").build();
+    }
 
     /**
      * Setup and update database files.
@@ -44,8 +69,6 @@ public class GeoReader {
         if (!dataFolder.exists())
             //noinspection ResultOfMethodCallIgnored
             dataFolder.mkdirs();
-
-        // @TODO 缓存检查
 
         // Atom update - Only replace database file while new database download successfully.
 
@@ -194,7 +217,7 @@ public class GeoReader {
         if (cityReader == null) return null;
         try {
             CountryResponse response = cityReader.country(address);
-            if(response.getRepresentedCountry() != null){
+            if (response.getRepresentedCountry() != null) {
                 return response.getRepresentedCountry().getIsoCode();
             }
             return response.getRegisteredCountry().getIsoCode();
