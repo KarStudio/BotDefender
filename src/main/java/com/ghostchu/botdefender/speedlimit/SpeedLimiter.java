@@ -31,7 +31,7 @@ public class SpeedLimiter implements Listener, Reloadable {
     private Cache<InetAddress, AtomicInteger> handshakeCounter;
     private Cache<InetAddress, AtomicInteger> pingCounter;
     private Cache<InetAddress, AtomicInteger> faviconOverrideCounter;
-    private Map<String, Map<StatusMode, Integer>> limiter = new HashMap<>();
+    private final Map<String, Map<StatusMode, Integer>> limiter = new HashMap<>();
     private long blockDuration;
 
     public SpeedLimiter(BotDefender plugin) {
