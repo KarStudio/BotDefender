@@ -15,7 +15,6 @@ public class MemoryStick {
     private Cache<InetAddress, Memory> cache = CacheBuilder
             .newBuilder()
             .expireAfterAccess(1, TimeUnit.HOURS)
-            .concurrencyLevel(Runtime.getRuntime().availableProcessors())
             .build();
 
     @NotNull

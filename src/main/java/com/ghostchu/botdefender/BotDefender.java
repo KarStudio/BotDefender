@@ -1,6 +1,11 @@
 package com.ghostchu.botdefender;
 
-import com.ghostchu.botdefender.iputil.GeoReader;
+import com.ghostchu.botdefender.blocker.BlockController;
+import com.ghostchu.botdefender.geoip.GeoReader;
+import com.ghostchu.botdefender.speedlimit.SpeedLimiter;
+import com.ghostchu.simplereloadlib.ReloadManager;
+import jdk.internal.org.jline.utils.Status;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -17,6 +22,14 @@ import java.util.logging.Level;
 public final class BotDefender extends Plugin {
     private final GeoReader geoReader = new GeoReader(this);
     private Configuration config;
+    @Getter
+    private final ReloadManager reloadManager = new ReloadManager();
+    @Getter
+    private BlockController blockController;
+    @Getter
+    private StatusMode currentMode = StatusMode.NORMAL;
+    @Getter
+    private SpeedLimiter speedLimiter;
 
 
     @Override
@@ -29,6 +42,8 @@ public final class BotDefender extends Plugin {
             getLogger().log(Level.SEVERE, "无法初始化 BotDefender 所需要的数据库，退出...");
             return;
         }
+        this.speedLimiter = new SpeedLimiter(this);
+
         getLogger().info("BotDefender by KarNetwork has been initialized.");
     }
 

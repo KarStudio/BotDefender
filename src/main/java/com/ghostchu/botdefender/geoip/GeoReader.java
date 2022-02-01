@@ -1,4 +1,4 @@
-package com.ghostchu.botdefender.iputil;
+package com.ghostchu.botdefender.geoip;
 
 import com.ghostchu.botdefender.BotDefender;
 import com.ice.tar.TarEntry;
@@ -7,9 +7,7 @@ import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.AsnResponse;
-import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
-import com.maxmind.geoip2.record.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +20,6 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 

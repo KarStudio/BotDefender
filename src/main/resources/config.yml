@@ -2,6 +2,8 @@
 speed-limit:
   # 检查时间，默认 3 分钟
   time: 3m
+  # 屏蔽时间，默认 10 分钟
+  block-duration: 10m
   # TCP 握手 (-1)为禁用
   # 注意，每一个 Ping 请求对应一次握手，加入游戏同理
   handshake:
@@ -17,7 +19,7 @@ speed-limit:
     # Under Attack 模式下，每 time 时间段内，最多可以请求 MOTD 多少次
     ATTACK: 15
   # Favicon 限流 (-1)为禁用
-  favicon-override:
+  favicon:
     # 普通模式下默认不限流
     NORMAL: -1
     # Under Attack 模式下，每 time 时间段内仅发送8次 Favicon
