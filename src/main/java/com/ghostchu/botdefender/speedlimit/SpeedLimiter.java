@@ -37,6 +37,7 @@ public class SpeedLimiter implements Listener, Reloadable {
     public SpeedLimiter(BotDefender plugin) {
         this.plugin = plugin;
         plugin.getReloadManager().register(this);
+        init();
         plugin.getProxy().getPluginManager().registerListener(plugin, this);
     }
 
@@ -57,7 +58,6 @@ public class SpeedLimiter implements Listener, Reloadable {
                 .newBuilder()
                 .expireAfterWrite(time, TimeUnit.MILLISECONDS)
                 .build();
-        limiter.clear();
         // module - handshake
         Map<StatusMode, Integer> handshake = new HashMap<>();
         for (String statusConfig : speedLimitConfig.getSection("handshake").getKeys()) {
