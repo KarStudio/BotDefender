@@ -16,6 +16,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -74,6 +75,10 @@ public class SpeedLimiter implements Listener, Reloadable {
         this.limiter.put("handshake", handshake);
         this.limiter.put("ping", ping);
         this.limiter.put("favicon", favicon);
+    }
+
+    public boolean hadPing(@NotNull InetAddress address) {
+        return this.pingCounter.getIfPresent(address) != null;
     }
 
     /**

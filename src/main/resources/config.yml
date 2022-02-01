@@ -31,6 +31,8 @@ speed-limit:
 # 越趋于负无穷，则该玩家可疑度越低
 # 越趋于正无穷，则该玩家可疑度越高
 suspicion:
+  # 默认基础分
+  base: 0
   # 白名单地址
   exclude:
     - 127.0.0.1
@@ -49,20 +51,6 @@ suspicion:
       CN:
         NORMAL: -30
         ATTACK: -10
-  # 基于城市的评分
-  city_filter:
-    # 是否启用
-    enable: false
-    # 不在列表里的国家/地区评分
-    not_in_list:
-      NORMAL: +0
-      ATTACK: +0
-    # 城市列表
-    cities:
-      # 城市名称: 分数
-      HUNAN:
-        NOTMAL: +0
-        ATTACK: +0
   # 基于 ASN 的评分
   asn_filter:
     # 是否启用
@@ -89,14 +77,12 @@ suspicion:
       ATTACK: +15000
     whitelist:
       - 172.0.0.0
+    # API 地址， API 应返回一行一个的 IPV4/IPV6 地址
+    api: "https://api.proxy.com/list"
   # 如果玩家连接前 Ping 过服务器，则额外赋分（数据由 speed-limiter 提供，若禁用，则该值无效）
   ping:
     NORMAL: -10
     ATTACK: +0
-  # 如果玩家之前链接过服务器，则额外赋分（数据由 speed-limiter 提供，若禁用，则该值无效）
-  newbie:
-    NORMAL: -30
-    ATTACK: -40
 
 # 决策器
 processor:
@@ -129,3 +115,5 @@ alert:
 # RPC消息处理服务器，用于处理IP封禁等
 rpc:
   url: "localhost:1234"
+maxmind:
+  key: "1234567"

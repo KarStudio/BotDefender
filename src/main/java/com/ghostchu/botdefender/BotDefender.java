@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 
 public final class BotDefender extends Plugin {
+    @Getter
     private final GeoReader geoReader = new GeoReader(this);
     private Configuration config;
     @Getter
@@ -32,12 +33,15 @@ public final class BotDefender extends Plugin {
     private SpeedLimiter speedLimiter;
 
 
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         getDataFolder().mkdirs();
+        saveDefaultConfig();
+        loadConfig();
         try {
-            geoReader.setupAndUpdateDatabase("", getDataFolder());
+            geoReader.setupAndUpdateDatabase(getConfig().getString("maxmind.key"), getDataFolder());
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "无法初始化 BotDefender 所需要的数据库，退出...");
             return;
