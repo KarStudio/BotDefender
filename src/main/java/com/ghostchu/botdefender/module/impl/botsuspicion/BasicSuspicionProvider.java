@@ -1,8 +1,9 @@
-package com.ghostchu.botdefender.suspicion;
+package com.ghostchu.botdefender.module.impl.botsuspicion;
 
 import com.ghostchu.botdefender.BotDefender;
 import com.ghostchu.botdefender.StatusMode;
 import com.ghostchu.botdefender.geoip.GeoReader;
+import com.ghostchu.botdefender.module.impl.Suspicion;
 import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
 import net.md_5.bungee.config.Configuration;

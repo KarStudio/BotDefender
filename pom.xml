@@ -134,6 +134,13 @@
             <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.waterfallmc</groupId>
+            <artifactId>waterfall</artifactId>
+            <version>1.18-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/waterfall-1.18-477.jar</systemPath>
+        </dependency>
         <!-- MaxMind GeoIP Database -->
         <dependency>
             <groupId>com.maxmind.geoip2</groupId>

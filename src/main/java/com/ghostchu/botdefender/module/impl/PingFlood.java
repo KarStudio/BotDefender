@@ -1,4 +1,4 @@
-package com.ghostchu.botdefender.speedlimit;
+package com.ghostchu.botdefender.module.impl;
 
 import com.ghostchu.botdefender.BotDefender;
 import com.ghostchu.botdefender.StatusMode;
@@ -9,13 +9,11 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.Favicon;
-import net.md_5.bungee.api.event.ClientConnectEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,15 +24,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SpeedLimiter implements Listener, Reloadable {
+public class PingFlood implements Listener, Reloadable {
     private final BotDefender plugin;
     private final Map<String, Map<StatusMode, Integer>> limiter = new HashMap<>();
-    private Cache<InetAddress, AtomicInteger> handshakeCounter;
     private Cache<InetAddress, AtomicInteger> pingCounter;
     private Cache<InetAddress, AtomicInteger> faviconOverrideCounter;
     private long blockDuration;
 
-    public SpeedLimiter(BotDefender plugin) {
+    public PingFlood(BotDefender plugin) {
         this.plugin = plugin;
         plugin.getReloadManager().register(this);
         init();
@@ -45,10 +42,6 @@ public class SpeedLimiter implements Listener, Reloadable {
         Configuration speedLimitConfig = plugin.getConfig().getSection("speed-limit");
         long time = TimeUtil.convert(speedLimitConfig.getString("speed-limit.time", "1m"));
         this.blockDuration = TimeUtil.convert(speedLimitConfig.getString("block-duration", "10m"));
-        this.handshakeCounter = CacheBuilder
-                .newBuilder()
-                .expireAfterWrite(time, TimeUnit.MILLISECONDS)
-                .build();
         this.pingCounter = CacheBuilder
                 .newBuilder()
                 .expireAfterWrite(time, TimeUnit.MILLISECONDS)
@@ -58,48 +51,16 @@ public class SpeedLimiter implements Listener, Reloadable {
                 .expireAfterWrite(time, TimeUnit.MILLISECONDS)
                 .build();
         // module - handshake
-        Map<StatusMode, Integer> handshake = new HashMap<>();
-        for (String statusConfig : speedLimitConfig.getSection("handshake").getKeys()) {
-            handshake.put(StatusMode.valueOf(statusConfig), speedLimitConfig.getInt("handshake." + statusConfig));
-        }
         Map<StatusMode, Integer> ping = new HashMap<>();
         for (String statusConfig : speedLimitConfig.getSection("ping").getKeys()) {
-            handshake.put(StatusMode.valueOf(statusConfig), speedLimitConfig.getInt("ping." + statusConfig));
+            ping.put(StatusMode.valueOf(statusConfig), speedLimitConfig.getInt("ping." + statusConfig));
         }
         Map<StatusMode, Integer> favicon = new HashMap<>();
         for (String statusConfig : speedLimitConfig.getSection("favicon").getKeys()) {
-            handshake.put(StatusMode.valueOf(statusConfig), speedLimitConfig.getInt("favicon." + statusConfig));
+            favicon.put(StatusMode.valueOf(statusConfig), speedLimitConfig.getInt("favicon." + statusConfig));
         }
-        this.limiter.put("handshake", handshake);
         this.limiter.put("ping", ping);
         this.limiter.put("favicon", favicon);
-    }
-
-    public boolean hadPing(@NotNull InetAddress address) {
-        return this.pingCounter.getIfPresent(address) != null;
-    }
-
-    /**
-     * 处理 TCP 握手
-     *
-     * @param event 事件
-     */
-    @SneakyThrows
-    @EventHandler(priority = EventPriority.LOW)
-    public void onHandShake(ClientConnectEvent event) {
-        SocketAddress socketAddress = event.getSocketAddress();
-        if (socketAddress instanceof InetSocketAddress) {
-            InetAddress address = ((InetSocketAddress) socketAddress).getAddress();
-            //  if (address.isAnyLocalAddress()) return;
-            AtomicInteger counter = handshakeCounter.get(address, () -> new AtomicInteger(0));
-            int count = counter.incrementAndGet();
-            // 握手检查
-            if (count >= limiter.get("handshake").get(plugin.getCurrentMode())) {
-                plugin.getBlockController().block(address, Duration.ofMillis(blockDuration));
-                event.setCancelled(true);
-                handshakeCounter.invalidate(address);
-            }
-        }
     }
 
     /**
