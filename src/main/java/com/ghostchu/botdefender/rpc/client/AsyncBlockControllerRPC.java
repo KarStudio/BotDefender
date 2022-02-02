@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +29,7 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
     private BlockControllerGrpc.BlockControllerBlockingStub blockingStub;
     private long lastCheck = System.currentTimeMillis();
     private long count = 0;
+    private Timer callbackTimer = new Timer("AsyncBlockControllerRPC-Observer-Callback", true);
 
 
     public AsyncBlockControllerRPC(@NotNull BotDefender plugin) {
@@ -49,6 +52,12 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
         };
         thread.setDaemon(true);
         thread.start();
+        callbackTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                observerCallback(false);
+            }
+        },0,1000);
         init();
 
     }
@@ -91,11 +100,12 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
                 .build();
         //noinspection ResultOfMethodCallIgnored
         this.queue.offer(() -> blockingStub.blockAddress(rpcBlockRequest));
-        observerCallback();
+        observerCallback(true);
     }
 
-    private synchronized void observerCallback() {
-        count++;
+    private synchronized void observerCallback(boolean plus) {
+        if(plus)
+            count++;
         if (System.currentTimeMillis() - lastCheck > 1000 * 60 * 5) {
             count = 0;
             lastCheck = System.currentTimeMillis();
