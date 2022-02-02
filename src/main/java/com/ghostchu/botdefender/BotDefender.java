@@ -2,7 +2,7 @@ package com.ghostchu.botdefender;
 
 import com.ghostchu.botdefender.blocker.BlockController;
 import com.ghostchu.botdefender.geoip.GeoReader;
-import com.ghostchu.botdefender.rpc.client.BlockControllerRPC;
+import com.ghostchu.botdefender.rpc.client.AsyncBlockControllerRPC;
 import com.ghostchu.botdefender.speedlimit.SpeedLimiter;
 import com.ghostchu.botdefender.suspicion.BasicSuspicionProvider;
 import com.ghostchu.botdefender.suspicion.Suspicion;
@@ -53,7 +53,8 @@ public final class BotDefender extends Plugin {
         }
         this.speedLimiter = new SpeedLimiter(this);
         this.suspicion = new BasicSuspicionProvider(this);
-        this.blockController = new BlockControllerRPC(this);
+        //this.blockController = new BlockControllerRPC(this);
+        this.blockController = new AsyncBlockControllerRPC(this);
         getLogger().info("BotDefender by KarNetwork has been initialized.");
     }
 
