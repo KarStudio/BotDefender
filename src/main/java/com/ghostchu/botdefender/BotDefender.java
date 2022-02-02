@@ -81,6 +81,8 @@ public final class BotDefender extends Plugin {
     }
 
     public void setCurrentMode(@NotNull StatusMode mode){
+        if(mode == currentMode)
+            return;
         this.currentMode = mode;
         getLogger().info("BotDefender is now in " + mode.name() + " mode.");
     }

@@ -1,6 +1,7 @@
 package com.ghostchu.botdefender.rpc.client;
 
 import com.ghostchu.botdefender.BotDefender;
+import com.ghostchu.botdefender.StatusMode;
 import com.ghostchu.botdefender.blocker.BlockController;
 import com.ghostchu.botdefender.rpc.proto.BlockControllerGrpc;
 import com.ghostchu.botdefender.rpc.proto.BlockControllerProto;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AsyncBlockControllerRPC implements Reloadable, BlockController {
     private final BotDefender plugin;
+    private double observerLimit = 1000d;
     private String user;
     private String target;
     private ManagedChannel channel;
@@ -33,7 +35,7 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
                 while (!isInterrupted()) {
                     try {
                         // Give thread a chance to be interrupted
-                        Runnable runnable = queue.poll(3, TimeUnit.SECONDS);
+                        Runnable runnable = queue.poll(1, TimeUnit.SECONDS);
                         if(runnable != null)
                             runnable.run();
                     } catch (Exception e) {
@@ -51,6 +53,7 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
     public void init() {
         this.user = plugin.getConfig().getString("rpc.user");
         this.target = plugin.getConfig().getString("rpc.target");
+        this.observerLimit = plugin.getConfig().getDouble("mode-observer.limit",1000d);
         if (this.channel != null)
             this.channel.shutdownNow();
         this.channel = ManagedChannelBuilder.forTarget(target)
@@ -69,6 +72,8 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
         return Reloadable.super.reloadModule();
     }
 
+
+
     /**
      * 封锁指定的 IP 地址
      *
@@ -86,7 +91,23 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
                 .build();
         //noinspection ResultOfMethodCallIgnored
         this.queue.offer(()-> blockingStub.blockAddress(rpcBlockRequest));
-
+        observerCallback();
+    }
+    private long lastCheck = System.currentTimeMillis();
+    private long count = 0;
+    private synchronized void observerCallback(){
+        count ++;
+        if(System.currentTimeMillis() - lastCheck > 1000*60*5){
+            count = 0;
+            lastCheck = System.currentTimeMillis();
+            return;
+        }
+        if(count > observerLimit){
+            plugin.getLogger().info("[OBSERVER] Attack Limit Reached, last 5min processed "+count+" ip bans, Switching to Under Attack mode...");
+            plugin.setCurrentMode(StatusMode.ATTACK);
+        }else{
+            plugin.setCurrentMode(StatusMode.NORMAL);
+        }
     }
 
     /**
