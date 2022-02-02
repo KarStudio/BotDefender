@@ -90,7 +90,7 @@ public class SpeedLimiter implements Listener, Reloadable {
         SocketAddress socketAddress = event.getSocketAddress();
         if (socketAddress instanceof InetSocketAddress) {
             InetAddress address = ((InetSocketAddress) socketAddress).getAddress();
-            if (address.isAnyLocalAddress()) return;
+          //  if (address.isAnyLocalAddress()) return;
             AtomicInteger counter = handshakeCounter.get(address, () -> new AtomicInteger(0));
             int count = counter.incrementAndGet();
             // 握手检查
