@@ -19,12 +19,15 @@ import java.util.concurrent.TimeUnit;
 
 public class AsyncBlockControllerRPC implements Reloadable, BlockController {
     private final BotDefender plugin;
+    private final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private int observerLimit = 1000;
     private String user;
     private String target;
     private ManagedChannel channel;
     private BlockControllerGrpc.BlockControllerBlockingStub blockingStub;
-    private final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private long lastCheck = System.currentTimeMillis();
+    private long count = 0;
+
 
     public AsyncBlockControllerRPC(@NotNull BotDefender plugin) {
         this.plugin = plugin;
@@ -36,7 +39,7 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
                     try {
                         // Give thread a chance to be interrupted
                         Runnable runnable = queue.poll(1, TimeUnit.SECONDS);
-                        if(runnable != null)
+                        if (runnable != null)
                             runnable.run();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -53,7 +56,7 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
     public void init() {
         this.user = plugin.getConfig().getString("rpc.user");
         this.target = plugin.getConfig().getString("rpc.target");
-        this.observerLimit = plugin.getConfig().getInt("mode-observer.limit",1000);
+        this.observerLimit = plugin.getConfig().getInt("mode-observer.limit", 1000);
         if (this.channel != null)
             this.channel.shutdownNow();
         this.channel = ManagedChannelBuilder.forTarget(target)
@@ -65,14 +68,11 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
 
     }
 
-
     @Override
     public ReloadResult reloadModule() throws Exception {
         init();
         return Reloadable.super.reloadModule();
     }
-
-
 
     /**
      * 封锁指定的 IP 地址
@@ -90,22 +90,21 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
                 .setDuration(duration.toMillis())
                 .build();
         //noinspection ResultOfMethodCallIgnored
-        this.queue.offer(()-> blockingStub.blockAddress(rpcBlockRequest));
+        this.queue.offer(() -> blockingStub.blockAddress(rpcBlockRequest));
         observerCallback();
     }
-    private long lastCheck = System.currentTimeMillis();
-    private long count = 0;
-    private synchronized void observerCallback(){
-        count ++;
-        if(System.currentTimeMillis() - lastCheck > 1000*60*5){
+
+    private synchronized void observerCallback() {
+        count++;
+        if (System.currentTimeMillis() - lastCheck > 1000 * 60 * 5) {
             count = 0;
             lastCheck = System.currentTimeMillis();
             return;
         }
-        if(count > observerLimit){
-            plugin.getLogger().info("[OBSERVER] Attack Limit Reached, last 5min processed "+count+" ip bans, Switching to Under Attack mode...");
+        if (count > observerLimit) {
+            plugin.getLogger().info("[OBSERVER] Attack Limit Reached, last 5min processed " + count + " ip bans, Switching to Under Attack mode...");
             plugin.setCurrentMode(StatusMode.ATTACK);
-        }else{
+        } else {
             plugin.setCurrentMode(StatusMode.NORMAL);
         }
     }
@@ -120,6 +119,6 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
         plugin.getLogger().info("[RPC] Unblock IPAddress: " + address.getHostAddress());
         BlockControllerProto.Address rpcAddress = BlockControllerProto.Address.newBuilder().setAddress(address.getHostAddress()).build();
         //noinspection ResultOfMethodCallIgnored
-        this.queue.offer(()-> blockingStub.unblockAddress(rpcAddress));
+        this.queue.offer(() -> blockingStub.unblockAddress(rpcAddress));
     }
 }

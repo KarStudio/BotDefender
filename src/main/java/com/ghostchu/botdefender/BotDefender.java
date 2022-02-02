@@ -23,10 +23,10 @@ import java.util.logging.Level;
 
 public final class BotDefender extends Plugin {
     @Getter
-    private  GeoReader geoReader;
-    private Configuration config;
-    @Getter
     private final ReloadManager reloadManager = new ReloadManager();
+    @Getter
+    private GeoReader geoReader;
+    private Configuration config;
     @Getter
     private BlockController blockController;
     @Getter
@@ -35,7 +35,6 @@ public final class BotDefender extends Plugin {
     private SpeedLimiter speedLimiter;
     @Getter
     private Suspicion suspicion;
-
 
 
     @Override
@@ -80,8 +79,8 @@ public final class BotDefender extends Plugin {
         ConfigurationProvider.getProvider(YamlConfiguration.class).save(this.config, new File(getDataFolder(), "config.yml"));
     }
 
-    public void setCurrentMode(@NotNull StatusMode mode){
-        if(mode == currentMode)
+    public void setCurrentMode(@NotNull StatusMode mode) {
+        if (mode == currentMode)
             return;
         this.currentMode = mode;
         getLogger().info("BotDefender is now in " + mode.name() + " mode.");

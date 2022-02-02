@@ -28,10 +28,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpeedLimiter implements Listener, Reloadable {
     private final BotDefender plugin;
+    private final Map<String, Map<StatusMode, Integer>> limiter = new HashMap<>();
     private Cache<InetAddress, AtomicInteger> handshakeCounter;
     private Cache<InetAddress, AtomicInteger> pingCounter;
     private Cache<InetAddress, AtomicInteger> faviconOverrideCounter;
-    private final Map<String, Map<StatusMode, Integer>> limiter = new HashMap<>();
     private long blockDuration;
 
     public SpeedLimiter(BotDefender plugin) {
@@ -90,7 +90,7 @@ public class SpeedLimiter implements Listener, Reloadable {
         SocketAddress socketAddress = event.getSocketAddress();
         if (socketAddress instanceof InetSocketAddress) {
             InetAddress address = ((InetSocketAddress) socketAddress).getAddress();
-          //  if (address.isAnyLocalAddress()) return;
+            //  if (address.isAnyLocalAddress()) return;
             AtomicInteger counter = handshakeCounter.get(address, () -> new AtomicInteger(0));
             int count = counter.incrementAndGet();
             // 握手检查

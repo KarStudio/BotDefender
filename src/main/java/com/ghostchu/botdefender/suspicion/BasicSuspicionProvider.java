@@ -84,7 +84,7 @@ public class BasicSuspicionProvider implements Suspicion, Reloadable {
     public int getScore(@NotNull InetAddress address) {
         StatusMode mode = plugin.getCurrentMode();
         int score = baseScore;
-        if(this.exclude.contains(address)) {
+        if (this.exclude.contains(address)) {
             return score;
         }
         if (this.countryFilter != null) {
@@ -102,7 +102,7 @@ public class BasicSuspicionProvider implements Suspicion, Reloadable {
 
 
     private int getPingScore(@NotNull InetAddress address) {
-        if(plugin.getSpeedLimiter().hadPing(address)){
+        if (plugin.getSpeedLimiter().hadPing(address)) {
             return pingScores.get(plugin.getCurrentMode());
         }
         return 0;

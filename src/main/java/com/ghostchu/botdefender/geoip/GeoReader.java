@@ -180,17 +180,6 @@ public class GeoReader implements Listener, Reloadable {
     }
 
     /**
-     * ASN Data
-     */
-    @AllArgsConstructor
-    @Data
-    static class ASNData {
-        private final Long number;
-        private final String organization;
-    }
-
-
-    /**
      * Get the country code of the given IP address.
      *
      * @param ip The IP address.
@@ -225,5 +214,15 @@ public class GeoReader implements Listener, Reloadable {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * ASN Data
+     */
+    @AllArgsConstructor
+    @Data
+    static class ASNData {
+        private final Long number;
+        private final String organization;
     }
 }

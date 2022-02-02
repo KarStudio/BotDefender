@@ -24,6 +24,7 @@
  */
 
 package com.ghostchu.botdefender.thirdparty.spark;
+
 /**
  * Statistics for a recorded double value.
  */

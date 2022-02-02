@@ -50,7 +50,7 @@ public class RequestProcessor implements Listener, Reloadable {
         InetAddress address = socketAddress.getAddress();
         int score = plugin.getSuspicion().getScore(address);
         ConfigRecord ruleRecord = configMap.get(plugin.getCurrentMode());
-        if(score < ruleRecord.getMinSuspicionScore()){
+        if (score < ruleRecord.getMinSuspicionScore()) {
             // 执行操作
             switch (ruleRecord.getAction()) {
                 case DISCONNECT:
@@ -59,7 +59,7 @@ public class RequestProcessor implements Listener, Reloadable {
                     break;
                 case BLOCK:
                     event.setCancelled(true);
-                    if(ruleRecord.getMessage() != null)
+                    if (ruleRecord.getMessage() != null)
                         event.setCancelReason(MineDown.parse(ruleRecord.getMessage()));
                     plugin.getBlockController().block(address, Duration.ofMillis(ruleRecord.getDuration()));
             }
@@ -80,11 +80,11 @@ public class RequestProcessor implements Listener, Reloadable {
         private String message;
         private long duration;
 
-        public ConfigRecord(@NotNull Configuration config){
-            this.minSuspicionScore = config.getInt("min_suspicion_score",50);
-            this.action = Action.valueOf(config.getString("action","DISCONNECT"));
-            this.message = config.getString("message","");
-            this.duration = TimeUtil.convert(config.getString("duration","30m"));
+        public ConfigRecord(@NotNull Configuration config) {
+            this.minSuspicionScore = config.getInt("min_suspicion_score", 50);
+            this.action = Action.valueOf(config.getString("action", "DISCONNECT"));
+            this.message = config.getString("message", "");
+            this.duration = TimeUtil.convert(config.getString("duration", "30m"));
         }
 
         enum Action {
