@@ -26,5 +26,5 @@
 
 * WaterFall 及其分支
 * Java 8+ 版本 JRE
-* 在 root 权限下运行的 BotDefender-Native
+* 在 root 权限下运行的 [BotDefender-Native](https://github.com/KarStudio/BotDefender-Native)
 
