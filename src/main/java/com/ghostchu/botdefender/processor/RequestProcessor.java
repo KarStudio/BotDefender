@@ -48,7 +48,7 @@ public class RequestProcessor implements Listener, Reloadable {
             return;
         InetSocketAddress socketAddress = (InetSocketAddress) event.getConnection().getSocketAddress();
         InetAddress address = socketAddress.getAddress();
-        int score = plugin.getSuspicion().getScore(address);
+        int score = plugin.getModuleManager().getSuspicion().getScore(address);
         ConfigRecord ruleRecord = configMap.get(plugin.getCurrentMode());
         if (score < ruleRecord.getMinSuspicionScore()) {
             // 执行操作
