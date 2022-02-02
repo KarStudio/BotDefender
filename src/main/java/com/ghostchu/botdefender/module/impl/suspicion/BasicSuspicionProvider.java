@@ -1,4 +1,4 @@
-package com.ghostchu.botdefender.suspicion;
+package com.ghostchu.botdefender.module.impl.suspicion;
 
 import com.ghostchu.botdefender.BotDefender;
 import com.ghostchu.botdefender.StatusMode;
@@ -100,9 +100,9 @@ public class BasicSuspicionProvider implements Suspicion, Reloadable {
         return score;
     }
 
-
+    // TODO: Ping 行为评分
     private int getPingScore(@NotNull InetAddress address) {
-        if (plugin.getSpeedLimiter().hadPing(address)) {
+        if (plugin.getModuleManager().getPingFlood().hadPing(address)) {
             return pingScores.get(plugin.getCurrentMode());
         }
         return 0;

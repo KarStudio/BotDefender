@@ -2,10 +2,8 @@ package com.ghostchu.botdefender;
 
 import com.ghostchu.botdefender.blocker.BlockController;
 import com.ghostchu.botdefender.geoip.GeoReader;
+import com.ghostchu.botdefender.module.ModuleManager;
 import com.ghostchu.botdefender.rpc.client.AsyncBlockControllerRPC;
-import com.ghostchu.botdefender.speedlimit.SpeedLimiter;
-import com.ghostchu.botdefender.suspicion.BasicSuspicionProvider;
-import com.ghostchu.botdefender.suspicion.Suspicion;
 import com.ghostchu.simplereloadlib.ReloadManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -32,9 +30,7 @@ public final class BotDefender extends Plugin {
     @Getter
     private StatusMode currentMode = StatusMode.NORMAL;
     @Getter
-    private SpeedLimiter speedLimiter;
-    @Getter
-    private Suspicion suspicion;
+    private ModuleManager moduleManager;
 
 
     @Override
@@ -50,11 +46,9 @@ public final class BotDefender extends Plugin {
             getLogger().log(Level.SEVERE, "无法初始化 BotDefender 所需要的数据库，退出...");
             return;
         }
-        this.speedLimiter = new SpeedLimiter(this);
-        this.suspicion = new BasicSuspicionProvider(this);
-        //this.blockController = new BlockControllerRPC(this);
+        this.moduleManager = new ModuleManager(this);
         this.blockController = new AsyncBlockControllerRPC(this);
-        getLogger().info("BotDefender by KarNetwork has been initialized.");
+        getLogger().info("BotDefender by Ghost_chu has been initialized.");
     }
 
     @Override

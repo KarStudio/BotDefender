@@ -21,10 +21,16 @@ speed-limit:
   # Favicon 限流 (-1)为禁用
   favicon:
     # 普通模式下默认不限流
-    NORMAL: -1
+    NORMAL: 1000000
     # Under Attack 模式下，每 time 时间段内仅发送8次 Favicon
     # 超出后 Favicon 减少带宽影响
     ATTACK: 8
+  # TAB 补全
+  tab:
+    # 普通模式下每 time 时间段内最多可以请求 540 次
+    NORMAL: 540
+    # Under Attack 模式下，每 time 时间段内，最多可以请求 270 次
+    ATTACK: 270
 
 # 在玩家发起连接服务器请求后，执行置信度检查
 # 每位玩家的可疑分数默认为 0

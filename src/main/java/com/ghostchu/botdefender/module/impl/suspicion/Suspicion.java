@@ -1,4 +1,4 @@
-package com.ghostchu.botdefender.suspicion;
+package com.ghostchu.botdefender.module.impl.suspicion;
 
 import org.jetbrains.annotations.NotNull;
 
