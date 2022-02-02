@@ -7,9 +7,9 @@ import com.ghostchu.simplereloadlib.ReloadResult;
 import com.ghostchu.simplereloadlib.Reloadable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import io.github.waterfallmc.waterfall.event.ConnectionInitEvent;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.Favicon;
-import net.md_5.bungee.api.event.ClientConnectEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.config.Configuration;
@@ -86,8 +86,8 @@ public class SpeedLimiter implements Listener, Reloadable {
      */
     @SneakyThrows
     @EventHandler(priority = EventPriority.LOW)
-    public void onHandShake(ClientConnectEvent event) {
-        SocketAddress socketAddress = event.getSocketAddress();
+    public void onHandShake(ConnectionInitEvent event) {
+        SocketAddress socketAddress = event.getRemoteSocketAddress();
         if (socketAddress instanceof InetSocketAddress) {
             InetAddress address = ((InetSocketAddress) socketAddress).getAddress();
             //  if (address.isAnyLocalAddress()) return;
