@@ -20,15 +20,17 @@ public class BlockControllerRPC implements Reloadable, BlockController {
     private String target;
     private ManagedChannel channel;
     private BlockControllerGrpc.BlockControllerBlockingStub blockingStub;
+
     public BlockControllerRPC(@NotNull BotDefender plugin) {
         this.plugin = plugin;
         plugin.getReloadManager().register(this);
         init();
     }
-    public void init(){
+
+    public void init() {
         this.user = plugin.getConfig().getString("rpc.user");
         this.target = plugin.getConfig().getString("rpc.target");
-        if(this.channel != null)
+        if (this.channel != null)
             this.channel.shutdownNow();
         this.channel = ManagedChannelBuilder.forTarget(target)
                 // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
@@ -53,8 +55,8 @@ public class BlockControllerRPC implements Reloadable, BlockController {
      */
     @Override
     public void block(@NotNull InetAddress address, @NotNull Duration duration) {
-        long endTime = System.currentTimeMillis()+duration.toMillis();
-        plugin.getLogger().info("[RPC] Block IPAddress: "+address.getHostAddress()+", Until: "+ new Date(endTime));
+        long endTime = System.currentTimeMillis() + duration.toMillis();
+        plugin.getLogger().info("[RPC] Block IPAddress: " + address.getHostAddress() + ", Until: " + new Date(endTime));
         BlockControllerProto.Address rpcAddress = BlockControllerProto.Address.newBuilder().setAddress(address.getHostAddress()).build();
         BlockControllerProto.BlockRequest rpcBlockRequest = BlockControllerProto.BlockRequest.newBuilder()
                 .setAddress(rpcAddress)
@@ -71,7 +73,7 @@ public class BlockControllerRPC implements Reloadable, BlockController {
      */
     @Override
     public void unblock(@NotNull InetAddress address) {
-        plugin.getLogger().info("[RPC] Unblock IPAddress: "+address.getHostAddress());
+        plugin.getLogger().info("[RPC] Unblock IPAddress: " + address.getHostAddress());
         BlockControllerProto.Address rpcAddress = BlockControllerProto.Address.newBuilder().setAddress(address.getHostAddress()).build();
         //noinspection ResultOfMethodCallIgnored
         blockingStub.unblockAddress(rpcAddress);
