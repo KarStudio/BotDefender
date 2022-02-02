@@ -102,7 +102,7 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
             return;
         }
         if (count > observerLimit) {
-            plugin.getLogger().info("[OBSERVER] Attack Limit Reached, last 5min processed " + count + " ip bans, Switching to Under Attack mode...");
+            plugin.getLogger().info("[OBSERVER] Attack Limit Reached, last 5min processed " + count + " ip bans...");
             plugin.setCurrentMode(StatusMode.ATTACK);
         } else {
             plugin.setCurrentMode(StatusMode.NORMAL);
