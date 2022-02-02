@@ -86,7 +86,7 @@ suspicion:
 # 模式切换器
 # 如果最近 5 分钟平均每秒封禁 IP 数超过此值，则切换到 Under Attack 模式
 mode-observer:
-  limit: 10.0
+  limit: 15
 # 决策器
 processor:
   # 常规模式下

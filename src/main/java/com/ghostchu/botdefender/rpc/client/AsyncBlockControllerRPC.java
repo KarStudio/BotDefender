@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AsyncBlockControllerRPC implements Reloadable, BlockController {
     private final BotDefender plugin;
-    private double observerLimit = 1000d;
+    private int observerLimit = 1000;
     private String user;
     private String target;
     private ManagedChannel channel;
@@ -53,7 +53,7 @@ public class AsyncBlockControllerRPC implements Reloadable, BlockController {
     public void init() {
         this.user = plugin.getConfig().getString("rpc.user");
         this.target = plugin.getConfig().getString("rpc.target");
-        this.observerLimit = plugin.getConfig().getDouble("mode-observer.limit",1000d);
+        this.observerLimit = plugin.getConfig().getInt("mode-observer.limit",1000);
         if (this.channel != null)
             this.channel.shutdownNow();
         this.channel = ManagedChannelBuilder.forTarget(target)
