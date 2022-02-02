@@ -58,7 +58,7 @@ public class BlockControllerRPC implements Reloadable, BlockController {
         BlockControllerProto.Address rpcAddress = BlockControllerProto.Address.newBuilder().setAddress(address.getHostAddress()).build();
         BlockControllerProto.BlockRequest rpcBlockRequest = BlockControllerProto.BlockRequest.newBuilder()
                 .setAddress(rpcAddress)
-                .setEndTime(endTime)
+                .setDuration(duration.toMillis())
                 .build();
         //noinspection ResultOfMethodCallIgnored
         blockingStub.blockAddress(rpcBlockRequest);
