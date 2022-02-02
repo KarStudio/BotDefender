@@ -97,6 +97,7 @@ public class SpeedLimiter implements Listener, Reloadable {
             if (count >= limiter.get("handshake").get(plugin.getCurrentMode())) {
                 plugin.getBlockController().block(address, Duration.ofMillis(blockDuration));
                 event.setCancelled(true);
+                handshakeCounter.invalidate(address);
             }
         }
     }
@@ -120,6 +121,7 @@ public class SpeedLimiter implements Listener, Reloadable {
             if (count >= limiter.get("ping").get(plugin.getCurrentMode())) {
                 plugin.getBlockController().block(address, Duration.ofMillis(blockDuration));
                 event.getConnection().disconnect("Ping limit reached");
+                pingCounter.invalidate(address);
                 return;
             }
             // Favicon 限流
